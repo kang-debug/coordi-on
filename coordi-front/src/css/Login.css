@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Protest+Strike&display=swap');
+
+.Login-container {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    vertical-align:middle;
+}
+
+.coordi-on-title {
+    font-family: "Protest Strike", serif;
+    color: #320098;
+    font-weight: 400;
+    font-size: 100px;
+    margin-top: 200px;
+}
+.Login-Input {
+    width: 90%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+
+.Login-InputField {
+    width: 100%;
+    height: 5vh;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 30px;
+    border-radius: 4px;
+}
+
+.Login-Button {
+    width: 90%;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #1d50ea;
+    background-color: #ffffff;
+    border-color: #1d50ea;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.Login-Button:hover {
+    background-color: rgba(5, 205, 251, 0.51);
+}

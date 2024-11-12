@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Protest+Strike&display=swap');
+
+.SignUp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.coordi-on-title {
+    font-family: "Protest Strike", serif;
+    color: #320098;
+    font-weight: 400;
+    font-size: 100px;
+    margin-top: 50px;
+}
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.SignUp-Input {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+
+.SignUp-InputField {
+    width: 80%;
+    height: 5vh;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 30px;
+    border-radius: 4px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.SignUp-Button {
+    width: 90%;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #1d50ea;
+    background-color: #ffffff;
+    border-color: #1d50ea;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.SignUp-Button:hover {
+    background-color: rgba(5, 205, 251, 0.51);
+}
+.SignUp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.SignUp-section {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.SignUp-location-fields {
+    display: flex;
+    gap: 10px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.SignUp-Button {
+    width: 90%;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #1d50ea;
+    background-color: #ffffff;
+    border-color: #1d50ea;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.SignUp-Button:hover {
+    background-color: rgba(5, 205, 251, 0.51);
+}
