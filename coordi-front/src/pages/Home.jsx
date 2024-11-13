@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../api/axios.jsx";
 import WeatherWidget from "../components/WeatherWidget.jsx";
+import '../css/Home.css';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ const Home = () => {
 
     const fetchOutfitRecommendation = async (age, gender, temperature, weatherCondition, maxTemp, minTemp, rain) => {
         try {
-            const response = await axiosInstance.post('/ai-fashion2', {
+            const response = await axiosInstance.post('/ai-fashion', {
                 age,
                 gender,
                 temperature,
@@ -94,12 +95,22 @@ const Home = () => {
                     {outfitRecommendation && (
                         <div className="outfit-recommendation">
                             <h2>오늘의 옷 추천</h2>
-                            <ul>
-                                <li><strong>상의:</strong> {outfitRecommendation.상의}</li>
-                                <li><strong>하의:</strong> {outfitRecommendation.하의}</li>
-                                <li><strong>아우터:</strong> {outfitRecommendation.아우터}</li>
-                                <li><strong>신발:</strong> {outfitRecommendation.신발}</li>
-                            </ul>
+                            {['상의', '하의', '아우터', '신발'].map((category) => {
+                                const details = outfitRecommendation[category];
+                                if (!details) return null;
+                                return (
+                                    <div key={category} className="outfit-item">
+                                        <h3>{category}</h3>
+                                        <p><strong>추천 아이템:</strong> {details.item}</p>
+                                        <div className="image-gallery">
+                                            {details.imageUrls.map((url, index) => (
+                                                <img key={index} src={url} alt={`${category} 이미지 ${index + 1}`}
+                                                     className="outfit-image"/>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </>

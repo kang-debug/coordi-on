@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class AiController2 {
+public class AiController {
 
     @Autowired
     private AiService aiService;
 
-    @PostMapping("/api/ai-fashion2")
+    @PostMapping("/api/ai-fashion")
     public ResponseEntity<Map<String, Object>> getOutfitRecommendation(@RequestBody Map<String, Object> requestParams) {
         int age = (int) requestParams.get("age");
         String gender = (String) requestParams.get("gender");
@@ -31,7 +31,7 @@ public class AiController2 {
         String weatherComment = aiService.getWeatherComment(temperature, weatherCondition, maxTemp, minTemp, rain);
         result.put("weatherComment", weatherComment != null ? weatherComment : "날씨 코멘트를 가져올 수 없습니다.");
 
-        Map<String, Map<String, String>> outfitRecommendation = aiService.getOutfitRecommendation(age, gender, temperature, weatherCondition, maxTemp, minTemp);
+        Map<String, Map<String, Object>> outfitRecommendation = aiService.getOutfitRecommendation(age, gender, temperature, weatherCondition, maxTemp, minTemp);
         result.put("outfitRecommendation", outfitRecommendation);
 
         return ResponseEntity.ok(result);

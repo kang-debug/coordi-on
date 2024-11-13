@@ -66,6 +66,7 @@ public class MemberController {
         }
     }
 
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginData) {
         String email = loginData.get("email");
@@ -89,7 +90,6 @@ public class MemberController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
         MemberDto memberDto = memberService.getUserProfileByEmail(principal.getName());
         return ResponseEntity.ok(memberDto);
     }
@@ -116,6 +116,7 @@ public class MemberController {
         memberService.sendVerificationCode(email);
         return ResponseEntity.ok(Map.of("success", true, "message", "인증 코드가 전송되었습니다."));
     }
+
 
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> verificationData) {

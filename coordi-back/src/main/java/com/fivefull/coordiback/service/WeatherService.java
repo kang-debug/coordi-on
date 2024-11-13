@@ -123,13 +123,11 @@ public class WeatherService {
                 "&pageNo=1&numOfRows=10&dataType=JSON&base_date=" + baseDate +
                 "&base_time=" + baseTime + "&nx=" + nx + "&ny=" + ny;
 
-        System.out.println("Fetching real-time weather from API: " + url);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod("GET");
 
         int responseCode = conn.getResponseCode();
-        System.out.println("Real-time weather API response code: " + responseCode);
 
         BufferedReader rd = responseCode >= 200 && responseCode <= 300
                 ? new BufferedReader(new InputStreamReader(conn.getInputStream()))
@@ -189,7 +187,6 @@ public class WeatherService {
 
         grid.put("nx", nx);
         grid.put("ny", ny);
-        System.out.println("Converted lat/lon to grid: nx = " + nx + ", ny = " + ny);
         return grid;
     }
 
@@ -211,7 +208,6 @@ public class WeatherService {
                 closestBaseTime = baseTime;
             }
         }
-        System.out.println("Closest base time determined: " + closestBaseTime);
         return closestBaseTime;
     }
 
@@ -231,7 +227,6 @@ public class WeatherService {
                 tmxTmnData.put("TMN", fcstValue);
             }
         }
-        System.out.println("Parsed TMX/TMN data: " + tmxTmnData);
         return tmxTmnData;
     }
 
