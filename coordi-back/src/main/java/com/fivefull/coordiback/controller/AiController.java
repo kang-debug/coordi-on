@@ -1,59 +1,39 @@
 package com.fivefull.coordiback.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import com.fivefull.coordiback.service.AiService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-public class AiController {
+public class AiController2 {
 
-    @Value("${openai.api.key}")
-    private String openAiApiKey;
+    @Autowired
+    private AiService aiService;
 
-    @Value("${openai.api.url}")
-    private String openAiApiUrl;
+    @PostMapping("/api/ai-fashion2")
+    public ResponseEntity<Map<String, Object>> getOutfitRecommendation(@RequestBody Map<String, Object> requestParams) {
+        int age = (int) requestParams.get("age");
+        String gender = (String) requestParams.get("gender");
+        String temperature = (String) requestParams.get("temperature");
+        String weatherCondition = (String) requestParams.get("weatherCondition");
+        String maxTemp = (String) requestParams.get("maxTemp");
+        String minTemp = (String) requestParams.get("minTemp");
+        String rain = (String) requestParams.get("rain");
 
-    @GetMapping("/api/ai-fashion")
-    public ResponseEntity<String> getOutfitRecommendation(
-            @RequestParam("age") int age,
-            @RequestParam("gender") String gender,
-            @RequestParam("temperature") String temperature,
-            @RequestParam("weatherCondition") String weatherCondition,
-            @RequestParam("maxTemp") String maxTemp,
-            @RequestParam("minTemp") String minTemp
-    ) {
-        String prompt = String.format(
-                "오늘 날씨에 맞는 옷을 추천해줘. 나이는 %d세, 성별은 %s이고, 현재 기온은 %s°C, 날씨 상태는 %s, 최고기온은 %s°C, 최저기온은 %s°C.",
-                age, gender, temperature, weatherCondition, maxTemp, minTemp
-        );
+        Map<String, Object> result = new HashMap<>();
 
-        System.out.println(prompt);
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "gpt-3.5-turbo");
-        requestBody.put("messages", List.of(
-                Map.of("role", "system", "content", "You are a helpful coordinator."),
-                Map.of("role", "user", "content", prompt)
-        ));
+        String weatherComment = aiService.getWeatherComment(temperature, weatherCondition, maxTemp, minTemp, rain);
+        result.put("weatherComment", weatherComment != null ? weatherComment : "날씨 코멘트를 가져올 수 없습니다.");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(openAiApiKey);
+        Map<String, Map<String, String>> outfitRecommendation = aiService.getOutfitRecommendation(age, gender, temperature, weatherCondition, maxTemp, minTemp);
+        result.put("outfitRecommendation", outfitRecommendation);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(openAiApiUrl, entity, String.class);
-
-        return ResponseEntity.ok(response.getBody());
+        return ResponseEntity.ok(result);
     }
 }
