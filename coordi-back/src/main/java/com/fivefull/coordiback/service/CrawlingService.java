@@ -1,6 +1,8 @@
 package com.fivefull.coordiback.service;
 
-import com.fivefull.coordiback.util.ImageCache;
+import com.fivefull.coordiback.entity.ImageUrl;
+import com.fivefull.coordiback.repository.ImageUrlRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,71 +10,88 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CrawlingService {
 
-    private static final String BRANDI_URL = "https://brandi.co.kr/search?q=";
-    private static final String LOOKPIN_URL = "https://www.lookpin.co.kr/search/results?keywords=";
-    private final ImageCache cache = new ImageCache(60 * 60 * 1000); // Cache expiry: 1 hour
+    private static final String FEMALE_URL = "https://shop.29cm.co.kr/search?keyword=";
+    private static final String MALE_URL = "https://www.lookpin.co.kr/search/results?keywords=";
+
+    private static final Map<String, List<String>> maleOptions = Map.of(
+            "상의", List.of("니트", "티셔츠", "후드"),
+            "하의", List.of("청바지", "면바지", "슬랙스"),
+            "아우터", List.of("무스탕", "항공 점퍼", "숏패딩", "롱패딩"),
+            "신발", List.of("운동화", "부츠", "로퍼")
+    );
+
+    private static final Map<String, List<String>> femaleOptions = Map.of(
+            "상의", List.of("블라우스", "티셔츠", "맨투맨"),
+            "하의", List.of("스커트", "데님팬츠", "코튼팬츠"),
+            "아우터", List.of("코트", "가디건", "트렌치코트"),
+            "신발", List.of("스니커즈", "힐", "부츠", "운동화")
+    );
+
+    @Autowired
+    private ImageUrlRepository imageUrlRepository;
 
     public CrawlingService() {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\kkr91\\Desktop\\coordi-on\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe");
     }
 
-    public List<String> searchImageUrls(String keyword, String gender) {
-        String searchUrl = gender.equalsIgnoreCase("남성") ? LOOKPIN_URL : BRANDI_URL;
+    public void initializeImageUrls() {
 
-        List<String> cachedUrls = cache.get(keyword);
-        if (cachedUrls != null) {
-            System.out.println("Cache hit for keyword: " + keyword);
-            return cachedUrls;
+        imageUrlRepository.deleteAll();
+        System.out.println("image 초기화");
+
+        for (Map.Entry<String, List<String>> entry : maleOptions.entrySet()) {
+            saveCategoryImages(entry.getKey(), entry.getValue(), "남성");
         }
-        System.out.println("Cache miss for keyword: " + keyword);
+        for (Map.Entry<String, List<String>> entry : femaleOptions.entrySet()) {
+            saveCategoryImages(entry.getKey(), entry.getValue(), "여성");
+        }
+        System.out.println("Image URL initialization completed.");
+    }
 
+
+    private void saveCategoryImages(String category, List<String> items, String gender) {
+        for (String item : items) {
+            if (imageUrlRepository.findByCategoryAndItemAndGender(category, item, gender).isEmpty()) {
+                List<String> urls = crawlImagesForItem(item, gender);
+                ImageUrl imageUrl = new ImageUrl();
+                imageUrl.setCategory(category);
+                imageUrl.setItem(item);
+                imageUrl.setGender(gender);
+                imageUrl.setUrls(urls);
+                imageUrlRepository.save(imageUrl);
+            }
+        }
+    }
+
+    private List<String> crawlImagesForItem(String item, String gender) {
+        String searchUrl = gender.equalsIgnoreCase("남성") ? MALE_URL : FEMALE_URL;
         List<String> imageUrls = new ArrayList<>();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
 
         WebDriver driver = new ChromeDriver(options);
-
         try {
-            driver.get(searchUrl + keyword);
+            driver.get(searchUrl + item);
             Thread.sleep(2000);
 
-            List<WebElement> imageElements;
-            if (gender.equalsIgnoreCase("남성")) {
-                imageElements = driver.findElements(By.cssSelector("#root img"));
-                for (WebElement element : imageElements) {
-                    String url = element.getAttribute("src");
-                    if (url != null) {
-                        imageUrls.add(url);
-                    }
+            String selector = gender.equalsIgnoreCase("남성") ? "#root img" : "#__next img";
+            List<WebElement> imageElements = driver.findElements(By.cssSelector(selector));
 
-                    if (imageUrls.size() >= 5) {
-                        break;
-                    }
+            for (WebElement element : imageElements) {
+                String url = element.getAttribute("src");
+                if (url != null) {
+                    imageUrls.add(url);
                 }
-            } else {
-                imageElements = driver.findElements(By.cssSelector("div.thumb"));
-                for (WebElement element : imageElements) {
-                    String url = extractImageUrlFromStyle(element.getAttribute("style"));
-                    if (url != null) {
-                        imageUrls.add(url);
-                    }
-
-                    if (imageUrls.size() >= 5) {
-                        break;
-                    }
-                }
+                if (imageUrls.size() >= 15) break;
             }
 
-            cache.put(keyword, imageUrls);
-
+            System.out.println("Crawled URLs for item " + item + ": " + imageUrls);
         } catch (Exception e) {
-            System.err.println("Error occurred during web scraping for keyword: " + keyword);
             e.printStackTrace();
         } finally {
             driver.quit();
@@ -81,19 +100,17 @@ public class CrawlingService {
         return imageUrls;
     }
 
-    private String extractImageUrlFromStyle(String style) {
-        if (!style.contains(".webp")) {
-            return null;
+
+    public List<String> getImageUrls(String category, String item, String gender, int startIndex, int endIndex) {
+        System.out.println("Fetching URLs with parameters: category=" + category + ", item=" + item + ", gender=" + gender);
+
+        Optional<ImageUrl> imageUrlOpt = imageUrlRepository.findByCategoryAndItemAndGender(category, item, gender);
+        if (imageUrlOpt.isPresent()) {
+            List<String> urls = imageUrlOpt.get().getUrls();
+            return urls.subList(Math.min(startIndex, urls.size()), Math.min(endIndex, urls.size()));
         }
 
-        int start = style.indexOf("url(\"") + "url(\"".length();
-        int end = style.indexOf("\")", start);
-
-        if (start > -1 && end > start) {
-            return style.substring(start, end);
-        }
-
-        System.err.println("Error extracting image URL from style attribute: " + style);
-        return null;
+        System.out.println("No URLs found for category=" + category + ", item=" + item + ", gender=" + gender);
+        return Collections.emptyList();
     }
 }

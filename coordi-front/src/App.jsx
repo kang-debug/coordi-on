@@ -7,6 +7,9 @@ import Home from './pages/Home.jsx';
 import KakaoHandler from './pages/KakaoHandler.jsx';
 import SignUpExternal from "./pages/SignUpExternal.jsx";
 import FindPass from "./pages/FindPass.jsx";
+import Snap from "./pages/Snap.jsx";
+import SnapUp from "./pages/SnapUp.jsx";
+import SnapDetail from "./pages/SnapDetail.jsx";
 
 function App() {
     return (
@@ -19,6 +22,9 @@ function App() {
                         <Route path="/signupex" element={<SignUpExternal/>}/>
                         <Route path="/findpass" element={<FindPass/>}/>
                         <Route path="/home" element={<Home/>}/>
+                        <Route path="/snap" element={<Snap/>}/>
+                        <Route path="/upload_snap" element={<SnapUp/>}/>
+                        <Route path="/detail_snap" element={<SnapDetail/>}/>
                     </Routes>
                 </Router>
             </div>

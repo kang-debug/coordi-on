@@ -31,7 +31,7 @@ public class AiController {
         String weatherComment = aiService.getWeatherComment(temperature, weatherCondition, maxTemp, minTemp, rain);
         result.put("weatherComment", weatherComment != null ? weatherComment : "날씨 코멘트를 가져올 수 없습니다.");
 
-        Map<String, Map<String, Object>> outfitRecommendation = aiService.getOutfitRecommendation(age, gender, temperature, weatherCondition, maxTemp, minTemp);
+        Map<String, String> outfitRecommendation = aiService.getOutfitRecommendation(age, gender, temperature, weatherCondition, maxTemp, minTemp);
         result.put("outfitRecommendation", outfitRecommendation);
 
         return ResponseEntity.ok(result);
