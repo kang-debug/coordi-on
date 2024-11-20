@@ -7,13 +7,14 @@ const SignUpEx = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { socialId, provider, email } = location.state;
-
     const [nickname, setNickname] = useState('');
     const [gender, setGender] = useState('');
     const [age, setAge] = useState('');
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [locationConsent, setLocationConsent] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [errors, setErrors] = useState({});
 
     const validateForm = () => {
@@ -23,6 +24,27 @@ const SignUpEx = () => {
         if (!age) newErrors.age = '나이를 입력해 주세요.';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const handleProfileImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImage(file);
+            setPreviewImage(URL.createObjectURL(file));
+        }
+    };
+
+    const convertImageToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
     };
 
     const handleLocationConsent = () => {
@@ -42,24 +64,37 @@ const SignUpEx = () => {
         }
     };
 
-    const handleSignUp = () => {
+    const handleSignUp = async () => {
         if (!validateForm()) return;
 
-        axiosInstance.post(`/member/signup/ex`, { email, nickname, gender, age, latitude, longitude, socialId, provider })
-            .then(res => {
+        const profileImageBase64 = profileImage
+            ? await convertImageToBase64(profileImage)
+            : null;
+
+        const memberData = {
+            email,
+            nickname,
+            provider,
+            socialId,
+            gender,
+            age,
+            latitude: locationConsent ? latitude : null,
+            longitude: locationConsent ? longitude : null,
+            profileImageUrl: profileImageBase64,
+        };
+
+        axiosInstance.post(`/member/signup/ex`, memberData)
+            .then((res) => {
                 if (res.data.success) {
                     alert('회원가입에 성공했습니다.');
-                    navigate('/home');
-                } else {
-                    alert('회원가입에 실패했습니다.');
+                    navigate('/');
                 }
             })
-            .catch(error => {
-                console.error("회원가입 오류:", error);
+            .catch((error) => {
+                console.error('Error:', error);
                 alert('회원가입 중 오류가 발생했습니다.');
             });
     };
-
     return (
         <div className="SignUp-container">
             <h1>외부 회원가입</h1>
@@ -71,6 +106,14 @@ const SignUpEx = () => {
                 className="SignUp-InputField"
             />
             {errors.nickname && <span className="error-message">{errors.nickname}</span>}
+            <div className="profile-image-container">
+                {previewImage ? (
+                    <img src={previewImage} alt="Profile Preview" className="profile-image-preview"/>
+                ) : (
+                    <div className="profile-image-placeholder">프로필 이미지</div>
+                )}
+                <input type="file" accept="image/*" onChange={handleProfileImageChange}/>
+            </div>
 
             <select
                 value={gender}

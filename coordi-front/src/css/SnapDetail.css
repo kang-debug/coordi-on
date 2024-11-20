@@ -1,0 +1,132 @@
+.snap-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.snap-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.snap-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.snap-header p {
+    font-size: 0.9rem;
+    color: gray;
+}
+
+.snap-images {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.snap-images img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.snap-description {
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.snap-actions {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.snap-actions button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff5252;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.snap-actions button:hover {
+    background-color: #ff7979;
+}
+
+.comments-section {
+    margin-top: 30px;
+}
+
+.add-comment {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.add-comment input {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-comment button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #3ea8ba;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.add-comment button:hover {
+    background-color: #63c2db;
+}
+
+.comments-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.comments-section ul li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+.image-gallery {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.gallery-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 500px;
+}

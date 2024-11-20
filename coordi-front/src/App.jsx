@@ -10,6 +10,9 @@ import FindPass from "./pages/FindPass.jsx";
 import Snap from "./pages/Snap.jsx";
 import SnapUp from "./pages/SnapUp.jsx";
 import SnapDetail from "./pages/SnapDetail.jsx";
+import MySnaps from "./pages/MySnaps.jsx";
+import Setting from "./pages/Setting.jsx";
+import EditSnap from "./pages/EditSnap.jsx";
 
 function App() {
     return (
@@ -24,7 +27,10 @@ function App() {
                         <Route path="/home" element={<Home/>}/>
                         <Route path="/snap" element={<Snap/>}/>
                         <Route path="/upload_snap" element={<SnapUp/>}/>
-                        <Route path="/detail_snap" element={<SnapDetail/>}/>
+                        <Route path="/detail_snap/:snapId" element={<SnapDetail />} />
+                        <Route path="/edit_snap/:snapId" element={<EditSnap />} />
+                        <Route path="/mysnaps" element={<MySnaps />} />
+                        <Route path="/my-setting" element={<Setting />} />
                     </Routes>
                 </Router>
             </div>

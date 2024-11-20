@@ -108,6 +108,10 @@ const Home = () => {
         navigate('/snap')
     }
 
+    const handleMyPage = () =>{
+        navigate('/mysnaps')
+    }
+
     return (
         <div className="home-container">
             <h1>홈 화면</h1>
@@ -118,6 +122,7 @@ const Home = () => {
                         <p>안녕하세요, {userInfo.nickname}님!</p>
                         <button onClick={handleLogout}>로그아웃</button>
                         <button onClick={handlesnap}>스냅으로</button>
+                        <button onClick={handleMyPage}>마이페이지</button>
                     </div>
                     {weatherComment && (
                         <div className="weather-comment">

@@ -100,3 +100,27 @@ input[type="checkbox"] {
 .SignUp-Button:hover {
     background-color: rgba(5, 205, 251, 0.51);
 }
+
+.profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-image-placeholder, .profile-image-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.profile-image-preview {
+    object-fit: cover;
+}

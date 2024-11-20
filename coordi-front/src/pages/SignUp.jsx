@@ -15,6 +15,8 @@ const SignUp = () => {
     const [locationConsent, setLocationConsent] = useState(false);
     const [inputVerificationCode, setInputVerificationCode] = useState('');
     const [isVerified, setIsVerified] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -38,6 +40,27 @@ const SignUp = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleProfileImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImage(file);
+            setPreviewImage(URL.createObjectURL(file));
+        }
+    };
+
+    const convertImageToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    };
+
     const handleLocationConsent = () => {
         setLocationConsent(!locationConsent);
         if (!locationConsent) {
@@ -47,7 +70,7 @@ const SignUp = () => {
                     setLatitude(latitude);
                     setLongitude(longitude);
                 },
-                () => alert("위치 정보를 가져오지 못했습니다."),
+                () => alert('위치 정보를 가져오지 못했습니다.'),
                 { enableHighAccuracy: true }
             );
         } else {
@@ -61,60 +84,65 @@ const SignUp = () => {
             setErrors((prevErrors) => ({ ...prevErrors, email: '이메일을 입력하세요.' }));
             return;
         }
-        axiosInstance.post(`/member/send-code`, { email, purpose: "signup" })
+        axiosInstance.post(`/member/send-code`, { email, purpose: 'signup' })
             .then(() => {
-                alert("인증 코드가 이메일로 전송되었습니다.");
+                alert('인증 코드가 이메일로 전송되었습니다.');
                 setErrors((prevErrors) => ({ ...prevErrors, email: null }));
             })
-            .catch(error => {
-                setErrors((prevErrors) => ({ ...prevErrors, email: error.response?.data?.error || "에러가 발생했습니다." }));
+            .catch((error) => {
+                setErrors((prevErrors) => ({ ...prevErrors, email: error.response?.data?.error || '에러가 발생했습니다.' }));
             });
     };
 
     const handleVerifyCode = () => {
         if (!inputVerificationCode) {
-            alert("인증 코드를 입력하세요.");
+            alert('인증 코드를 입력하세요.');
             return;
         }
         axiosInstance.post(`/member/verify-code`, { email, code: inputVerificationCode })
             .then(() => {
                 setIsVerified(true);
-                alert("이메일 인증이 완료되었습니다.");
+                alert('이메일 인증이 완료되었습니다.');
             })
-            .catch(error => {
-                console.error("Error:", error);
+            .catch((error) => {
+                console.error('Error:', error);
                 alert('인증 코드가 올바르지 않습니다.');
             });
     };
 
-    const handleSignUp = () => {
+    const handleSignUp = async () => {
         if (!validateForm()) return;
 
         if (!isVerified) {
-            alert("이메일 인증이 필요합니다.");
+            alert('이메일 인증이 필요합니다.');
             return;
         }
 
-        axiosInstance.post(`/member/signup`, { email, password, nickname, gender, age, latitude, longitude })
-            .then(res => {
+        const profileImageBase64 = profileImage
+            ? await convertImageToBase64(profileImage)
+            : null;
+
+        const memberData = {
+            email,
+            password,
+            nickname,
+            gender,
+            age,
+            latitude: locationConsent ? latitude : null,
+            longitude: locationConsent ? longitude : null,
+            profileImageUrl: profileImageBase64,
+        };
+
+        axiosInstance.post(`/member/signup`, memberData)
+            .then((res) => {
                 if (res.data.success) {
                     alert('회원가입에 성공했습니다.');
                     navigate('/');
-                } else {
-                    alert('회원가입에 실패했습니다.');
                 }
             })
-            .catch(error => {
-                const backendErrors = error.response?.data?.error;
-                if (backendErrors) {
-                    if (typeof backendErrors === 'string') {
-                        setErrors((prevErrors) => ({ ...prevErrors, general: backendErrors }));
-                    } else {
-                        setErrors((prevErrors) => ({ ...prevErrors, ...backendErrors }));
-                    }
-                } else {
-                    alert("회원가입 중 오류가 발생했습니다.");
-                }
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('회원가입 중 오류가 발생했습니다.');
             });
     };
 
@@ -159,6 +187,15 @@ const SignUp = () => {
                 className="SignUp-InputField"
             />
             {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+
+            <div className="profile-image-container">
+                {previewImage ? (
+                    <img src={previewImage} alt="Profile Preview" className="profile-image-preview" />
+                ) : (
+                    <div className="profile-image-placeholder">프로필 이미지</div>
+                )}
+                <input type="file" accept="image/*" onChange={handleProfileImageChange} />
+            </div>
 
             <input
                 type="text"
@@ -217,8 +254,6 @@ const SignUp = () => {
             {errors.location && <span className="error-message">{errors.location}</span>}
 
             <button onClick={handleSignUp} className="SignUp-Button">회원가입 완료</button>
-
-
         </div>
     );
 };
