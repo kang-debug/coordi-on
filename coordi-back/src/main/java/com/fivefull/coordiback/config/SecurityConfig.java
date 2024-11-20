@@ -31,7 +31,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/member/signup", "/api/member/login",
                                 "/api/member/verify-code","/api/member/send-code",
                                 "/api/member/kakao","api/member/signup/ex","/api/weather",
-                                "/api/ai-fashion","/api/member/reset-password","/api/crawling").permitAll()
+                                "/api/ai-fashion","/api/member/reset-password","/api/crawling",
+                                "/api/snaps/upload","/api/snaps/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

@@ -8,9 +8,10 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,9 @@ public class MemberService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private GCSService gcsService;
 
     // 비밀번호 해시로
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -51,15 +55,14 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+
+
     public Member signUp(MemberDto memberDto) {
-        // 비밀번호 유효성 검사 (조건)
         if (!PASSWORD_PATTERN.matcher(memberDto.getPassword()).matches()) {
             throw new IllegalArgumentException("비밀번호는 최소 8자리 이상이며 특수문자를 포함해야 합니다.");
         }
 
-        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
-
         validateNickname(memberDto.getNickname());
 
         Member member = new Member();
@@ -72,8 +75,18 @@ public class MemberService {
         member.setLatitude(memberDto.getLatitude());
         member.setLongitude(memberDto.getLongitude());
 
+        String profileImageUrl = memberDto.getProfileImageUrl();
+        if (profileImageUrl != null && profileImageUrl.startsWith("data:image")) {
+            profileImageUrl = gcsService.uploadBase64Image(profileImageUrl);
+        } else if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+            profileImageUrl = "https://storage.googleapis.com/cody_bucket_full/defalut%20image.png"; // 기본 이미지 URL
+        }
+
+        member.setProfileImageUrl(profileImageUrl);
+
         return memberRepository.save(member);
     }
+
 
     public Member signUpExternal(MemberDto memberDto) {
 
@@ -88,6 +101,15 @@ public class MemberService {
         member.setProvider(memberDto.getProvider());
         member.setLatitude(memberDto.getLatitude());
         member.setLongitude(memberDto.getLongitude());
+
+        String profileImageUrl = memberDto.getProfileImageUrl();
+        if (profileImageUrl != null && profileImageUrl.startsWith("data:image")) {
+            profileImageUrl = gcsService.uploadBase64Image(profileImageUrl);
+        } else if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+            profileImageUrl = "https://storage.googleapis.com/cody_bucket_full/defalut%20image.png"; // 기본 이미지 URL
+        }
+
+        member.setProfileImageUrl(profileImageUrl);
 
         return memberRepository.save(member);
     }
@@ -124,12 +146,15 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return MemberDto.builder()
+                .memberId(member.getMemberId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .gender(member.getGender())
                 .age(member.getAge())
                 .latitude(member.getLatitude())
                 .longitude(member.getLongitude())
+                .profileImageUrl(member.getProfileImageUrl())
+                .createdDate(member.getCreatedDate())
                 .build();
     }
 
@@ -149,4 +174,33 @@ public class MemberService {
         member.setPassword(encodedPassword);
         memberRepository.save(member);
     }
+
+    @Transactional
+    public Member updateMember(String email, MultipartFile profileImage, String nickname, Integer age, String gender) throws IOException {
+        // 현재 로그인된 사용자를 조회
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (nickname != null && !nickname.isEmpty() && !nickname.equals(member.getNickname())) {
+            if (memberRepository.existsByNickname(nickname)) {
+                throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            }
+            validateNickname(nickname);
+            member.setNickname(nickname);
+        }
+        if (age != null) {
+            member.setAge(age);
+        }
+
+        if (gender != null && (gender.equals("남성") || gender.equals("여성"))) {
+            member.setGender(gender);
+        }
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String uploadedUrl = gcsService.uploadFile(profileImage);
+            member.setProfileImageUrl(uploadedUrl);
+        }
+
+        return memberRepository.save(member);
+    }
+
 }

@@ -10,8 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,8 +36,15 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody MemberDto memberDto) {
-        Member member = memberService.signUp(memberDto);
-        return ResponseEntity.ok(Map.of("success", true, "memberId", member.getMemberId()));
+        try {
+            Member member = memberService.signUp(memberDto);
+            return ResponseEntity.ok(Map.of("success", true, "memberId", member.getMemberId()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "회원가입 중 오류가 발생했습니다."));
+        }
     }
 
     @PostMapping("/signup/ex")
@@ -140,4 +150,22 @@ public class MemberController {
         memberService.resetPassword(email, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateMember(
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "age", required = false) Integer age,
+            @RequestParam(value = "gender", required = false) String gender,
+            Principal principal) {
+        try {
+            Member updatedMember = memberService.updateMember(principal.getName(), profileImage, nickname, age, gender);
+            return ResponseEntity.ok(updatedMember);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("파일 업로드 중 오류가 발생했습니다.");
+        }
+    }
+
 }

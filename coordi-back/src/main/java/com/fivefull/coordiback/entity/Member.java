@@ -43,6 +43,9 @@ public class Member {
     @Column(nullable = true)
     private Double longitude;
 
+    @Column(nullable = false)
+    private String profileImageUrl;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;

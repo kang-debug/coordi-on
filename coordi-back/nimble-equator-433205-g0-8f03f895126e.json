@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nimble-equator-433205-g0",
+  "private_key_id": "8f03f895126e99e4c5577251ca7d136ff995433e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCbJaB/8eEdJeOz\n7dtITuZODE4/bm1PzabbzyiTRh7Clb5NNVigYbK55bgOgn04k0jdVfIEbM2y9Pw0\nbwbKknhhgotlLo0hIEutgnN6tyM3Dfyep2VFXwFEkaVKzWXdulr1x4EG/dh8Iqx2\nNgVTh9pqNB2M8x4vtoq6Rascbd5x3V1mxQSjx2ilR3iEfn9NmPl2YNfffWP+fMqj\nxwr/CuwpidCHq99x41ED/hJO6HmLF5UfjldYdHzkhA+RfRiTSfuTiCage5COcXXn\nty/pmBXV6PeYTWaDqtlqOmzp2r9Noh8WB5K+WgFbem3RyUIxXo8hT69ofTtmpD9h\nMaU9dkpJAgMBAAECggEAArga+ycVfZXqit6kOV0VpQBK9kpkjNGjRya3NLaVxy4J\n8O86i4wOznqH2mw/ztgo/qUZGeoAxG5OBcq83RvKU5YuxIIXe+FFpke7J6dSTQ6Y\nEv1G1XuL6YRed+RH8OYJXlWl7aYRD2LpsCQz/XHr+nDJpEzmBmrN/WQHctb7nzX9\npl/6PYyaoYi9nh9G+VNRxYIq36UdxauU7HU6wMdpI3hD9ASa8F72my2FRMz9Bc2+\nmxxBK9HqT8WDasA6fgSTJvDaqO9O6UqDALnTnJUxPnCp57ZAyQa+O1574wLu7c29\nTciT1fg8M5uoUAmKBIyB7v4MODQV7dW9DZMcCJqwQQKBgQDL1V3hBsjaM1xHcC18\n1Ibmww91A6xsBERiNfbsC1b0UclgXPFXKG9gl2NakgPHVbefJCnOoWrzWaQUCn6D\n2OEfFxThSZc9mqr4VsLF1vHfNUmDidxUMrT+X9wO0Wrdi8bpsV5j+iD1rqFNFHgT\n1OTWqtxwhrKgyvddt6qWRnfNCQKBgQDC2nMe7Uq9VFUw1NIIcJd4V5AKVd7ccbbI\n+xTqGc5XbVmnddo31ZRfYnaRcXLRg1l2QErQEvta+cQ4bL8QJWcReKHUTh+PPubF\nDmNNl8b8n1ynNMTRSS5oio6sqPS6j93qMhEZeK4g2vyjcLV9kuEVNOa0FhI6kQ0p\nIqbgq6sjQQKBgESVRyAm6z/X1i3HRdbhn35XlYTWtpYlnWi6JZnoetp8BljhDOc5\nmLgUV/6qcJEKe10ViueWkmjM+ZMwsL7mI2EVoBXpb/TvbKVgc+qjVwC2akTTBwph\ngVqxoFZwChf/Ju+MmWjkSWDA4E8SGxD5KgI8vS0zdTj68d5bpQ8pKLgZAoGAWmlU\nK1B9cnYUBVFql2Hu1ncCrdkETJMy9fSS0sDgnm5twCcN9wRSESQ10eyrEw34T8cr\nL3rvSFpGMsw6pzpDpbasmD8bo7LTDzJK33ECcqtbKXZxsI5dS0KnSvQmgf5JQOa0\nSnZVjYcu3INqovapG9btCTiIgsZVLfYXKn5dLUECgYB+20aFFLcZQg1oOi+j6Cjt\ni2heabCgrHs+wqsKZtmtmIShYMggN7KYf3+mmPKqmMUxwz9TIy9joVpXMnXeZfoN\njvi1kpNPD7+/YdTA+PLSn6p9Iw1yCyFRSotlyxpjbYWHykeOUyu0Il7w/YVGgS4O\no9dhLRILMMzsbD2oIEJYUw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "gcs-541@nimble-equator-433205-g0.iam.gserviceaccount.com",
+  "client_id": "105290811052503822511",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gcs-541%40nimble-equator-433205-g0.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
